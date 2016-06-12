@@ -1,0 +1,23 @@
+//created on: 2015-11-28
+package com.drools.imagesuite.sample
+
+//list any import classes here.
+
+
+
+//declare any global variables here
+
+
+
+
+rule "Drools Introduction"
+
+    when
+        //conditions
+        $droolsIntro : DroolsIntroduction(topic == "Drools" )
+    then
+    	System.out.println($droolsIntro.introductYourself());
+        //actions
+
+end
+

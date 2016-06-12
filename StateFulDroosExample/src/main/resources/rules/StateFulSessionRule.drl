@@ -1,0 +1,72 @@
+//created on: 2015-11-28
+package com.drools.imagesuite.sample
+
+//list any import classes here.
+
+
+
+//declare any global variables here
+
+rule "When there is a file turn on the sprinkler"
+	no-loop
+    when
+        //conditions
+        Fire($room	: Room) 
+        $sprinkler	: Sprinkler(room == $room, on == false)
+    then
+        //actions
+        modify($sprinkler) {setOn(true)};
+        System.out.println("Turn on the sprinkler for room" + $room.getName());
+
+end
+
+
+rule "When the fire is gone, turn off the sprinkler"
+	no-loop
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        $room	: Room()  
+        $sprinkler	:Sprinkler(room == $room, on == true)  
+        //not Fire(room == $room)
+    then
+        //actions
+        modify($sprinkler) {setOn(false)};
+        System.out.println("Turn off the sprinkler for room" + $room.getName());
+end
+
+
+rule "Raise the alarm when we have one or more fires"
+	no-loop
+    //include attributes such as "salience" here...
+    when
+        //conditions
+		exists Fire()
+    then
+        //actions
+		insert ( new Alarm());
+		System.out.println("Raise the alarm");
+end
+
+rule "Cancel the alarm when all the fires have gone"
+	no-loop
+    //include attributes such as "salience" here...
+    when
+        //conditions
+		not Fire() $alarm:Alarm()
+    then
+        //actions
+		delete($alarm);
+		System.out.println("Cancel the alarm");
+end
+
+rule "Status output when things are OK"
+	no-loop
+    //include attributes such as "salience" here...
+    when
+        //conditions
+		not Alarm() not Sprinkler(on == true)
+    then
+        //actions
+		System.out.println("Everything is OK");
+end
